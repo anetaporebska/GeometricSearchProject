@@ -3,6 +3,9 @@
 from kdtree import KDTree
 from sys import maxsize
 
+# TODO dodać pomiar czasu
+
+
 ### TEST 1 ###
 points1 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(45,23),(7,8),(1,3),(18,90), (80,80)]
 region1 = [(40,60), (90,110)]

@@ -1,18 +1,46 @@
 from sys import maxsize
 
+# TODO wizualizacja
+# TODO komentarze
+# TODO posprzątać kod
+# TODO dodać bardziej zaawansowane testy
+# TODO co z punktami, które leżą na dzielących liniach, gdzie są przyporządkowywane
+# TODO dokumentacja
+
 class Node:
     def __init__(self, point):
         self.point = point
         self.left = None
         self.right = None
-        self.parent = None
         self.upper_right = None
         self.lower_left = None
 
 
+def partition(arr,left,right, idx):
+    pi=arr[right][idx]
+    i=left-1
+
+    for j in range(left,right):
+        if arr[j][idx]<pi:
+            i+=1
+            arr[i],arr[j]=arr[j],arr[i]
+    arr[i+1],arr[right]=arr[right],arr[i+1]
+
+    return i+1
+
+def kthStatistics(arr,left,right,k, idx):
+    i=partition(arr,left,right, idx)
+    if i==k:
+        return arr[i]
+    if i>k:
+        kthStatistics(arr,left,i-1,k, idx)
+    else:
+        kthStatistics(arr,i+1,right,k, idx)
+
+# idx wskazuje po którym elemencie chcemy porównywać
 def median_idx(idx, points):
-    points.sort(key = lambda points : (points[idx], points[1-idx]))
     n = len(points)
+    kthStatistics(points,0, n-1, n//2, idx)
     return n//2
 
 class KDTree:
@@ -48,7 +76,6 @@ class KDTree:
         left_child = self.construct(left, depth+1, root)
         right_child = self.construct(right, depth+1, root)
 
-        root.parent = parent
         root.right = right_child
         root.left = left_child
 

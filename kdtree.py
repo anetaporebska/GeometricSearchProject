@@ -1,3 +1,4 @@
+from sys import maxsize
 
 class Node:
     def __init__(self, point):
@@ -14,15 +15,13 @@ def median_idx(idx, points):
     n = len(points)
     return n//2
 
-inf = 100000
-result = []
-
 class KDTree:
     def __init__(self,points):
         self.root = self.construct(points, 0, None)
-        self.root.upper_right = (inf, inf)
-        self.root.lower_left = (-inf, -inf)
+        self.root.upper_right = (maxsize, maxsize)
+        self.root.lower_left = (-maxsize, -maxsize)
         self.calculate_regions(self.root, 0)
+        self.result =[]
 
     def construct(self, points, depth, parent):
         # posortować po x i po y
@@ -87,6 +86,47 @@ class KDTree:
 
             self.calculate_regions(root.left, depth+1)
 
+    def report_subtree(self,  root):
+        self.result.append(root.point)
+        if root.left:
+            self.report_subtree(root.left)
+
+        if root.right:
+            self.report_subtree(root.right)
+
+    def search(self, lower_left, upper_right):
+        self.result = []
+        self.search_kd_tree(self.root, lower_left, upper_right)
+        return self.result
+
+    def search_kd_tree(self, root, ll, ur):
+
+        # v is a leaf
+        if root.right == None and root.left == None:
+            if point_inside(root.point, ll, ur):
+                self.result.append(root.point)
+                return
+
+        if point_inside(root.point, ll, ur):
+            self.result.append(root.point)
+
+        # region lc(v) is fully contained in R
+        if root.left:
+            if region_inside(root.lower_left, root.upper_right, ll, ur):
+                # report subtree lc(v)
+                self.report_subtree(root.left)
+
+            # region lc(v) intersects R
+            elif region_intersects(root.lower_left, root.upper_right, ll, ur):
+                self.search_kd_tree(root.left, ll, ur)
+
+        if root.right:
+            if region_inside(root.lower_left, root.upper_right, ll, ur):
+                self.report_subtree(root.right)
+
+            elif region_intersects(root.lower_left, root.upper_right, ll, ur):
+                self.search_kd_tree(root.right, ll, ur)
+
 
 def point_inside(point, ll, ur):
     return point[0]>=ll[0] and point[0]<=ur[0] and point[1]>=ll[1] and point[1]<=ur[1]
@@ -95,48 +135,8 @@ def point_inside(point, ll, ur):
 def region_inside(region_ll, region_ur, ll, ur):
     return point_inside(region_ll, ll, ur) and point_inside(region_ur, ll, ur)
 
-def report_subtree(root):
-    result.append(root.point)
-    if root.left:
-        report_subtree(root.left)
-
-    if root.right:
-        report_subtree(root.right)
-
 def region_intersects(region_ll, region_ur, ll, ur):
     return point_inside(region_ll, ll, ur) or point_inside(region_ur, ll, ur) or point_inside(ll, region_ll, region_ur) or point_inside(ur, region_ll, region_ur)
-
-def search_kd_tree(root, ll, ur):
-
-    # v is a leaf
-    if root.right == None and root.left == None:
-        if point_inside(root.point, ll, ur):
-            result.append(root.point)
-            return
-
-    if point_inside(root.point, ll, ur):
-        result.append(root.point)
-
-    # region lc(v) is fully contained in R
-    if root.left:
-        if region_inside(root.lower_left, root.upper_right, ll, ur):
-            # report subtree lc(v)
-            report_subtree(root.left)
-
-        # region lc(v) intersects R
-        elif region_intersects(root.lower_left, root.upper_right, ll, ur):
-            search_kd_tree(root.left, ll, ur)
-
-
-    if root.right:
-        if region_inside(root.lower_left, root.upper_right, ll, ur):
-            report_subtree(root.right)
-
-        elif region_intersects(root.lower_left, root.upper_right, ll, ur):
-            search_kd_tree(root.right, ll, ur)
-
-
-
 
 def traverse(root, depth):
     if not root:
@@ -183,8 +183,7 @@ if __name__ == "__main__":
     root4 = KDTree(points4)
     traverse(root4.root, 1)
 
-
-    search_kd_tree(root4.root, (40,60), (90,110))
+    result = root4.search((40,60), (90,110))
     print("RESULT: ")
     print(result)
 

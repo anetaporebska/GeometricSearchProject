@@ -44,37 +44,34 @@ def median_idx(idx, points):
     return n//2
 
 class KDTree:
-    def __init__(self,points):
-        self.root = self.construct(points, 0, None)
-        self.root.upper_right = (maxsize, maxsize)
-        self.root.lower_left = (-maxsize, -maxsize)
+    def __init__(self,points, visualizer):
+        self.root = self.construct(points, 0)
+        self.visualizer = visualizer
+        self.root.upper_right = (110, 110)      # TODO nie może być maxsize, lepiej największa i najmniejsza wartość z poinst!!!
+        self.root.lower_left = (0, 0)
         self.calculate_regions(self.root, 0)
         self.result =[]
 
-    def construct(self, points, depth, parent):
-        # posortować po x i po y
-        #
+    def construct(self, points, depth):
         n = len(points)
+
         if n<1:
             return None
 
         if n==1:
             return Node(points[0])
 
-        if depth%2 == 0:
+        idx = depth%2
 
-            m = median_idx(0,points)
-            left = points[0:m]
-            right = points[m+1:n]
+        m = median_idx(idx,points)
 
-        else:
-            m = median_idx(1,points)
-            left = points[0:m]
-            right = points[m+1:n]
+
+        left = points[0:m]
+        right = points[m+1:n]
 
         root = Node(points[m])
-        left_child = self.construct(left, depth+1, root)
-        right_child = self.construct(right, depth+1, root)
+        left_child = self.construct(left, depth+1)
+        right_child = self.construct(right, depth+1)
 
         root.right = right_child
         root.left = left_child
@@ -86,7 +83,13 @@ class KDTree:
         if root.right == None and root.left == None:
             root.lower_left = None
             root.upper_right = None
+            return
 
+        if self.visualizer:
+            if depth%2==0:
+                self.visualizer.add_line((root.point[0],root.lower_left[1]), (root.point[0], root.upper_right[1]))
+            else:
+                self.visualizer.add_line((root.lower_left[0], root.point[1]), (root.upper_right[0], root.point[1]))
 
         if root.right:
 
@@ -112,6 +115,7 @@ class KDTree:
                 root.left.lower_left = root.lower_left
 
             self.calculate_regions(root.left, depth+1)
+
 
     def report_subtree(self,  root):
         self.result.append(root.point)
@@ -190,24 +194,24 @@ def traverse(root, depth):
 
 if __name__ == "__main__":
     points1 = [(20,50),(30,40),(30,60)]
-    root1 = KDTree(points1)
+    root1 = KDTree(points1, None)
     traverse(root1.root,1)
 
     print("drugi")
     points2 = [(20, 50), (30, 40), (30, 60), (50,100),(60,70),(30,65),(10,45)]
-    root2 = KDTree(points2)
+    root2 = KDTree(points2, None)
     traverse(root2.root,1)
 
 
     print("trzeci")
     points3 = [(20, 50), (30, 40), (30, 60), (50, 100), (60, 70), (30, 60), (10, 45), (100,100),(30,50),(40,40),(20,20),(20,10),(45,23),(7,8),(1,3),(18,90)]
-    root3 = KDTree(points3)
+    root3 = KDTree(points3, None)
     traverse(root3.root,1)
 
 
     print("czwarty") # wszystkie punkty różne x i y
     points4 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(45,23),(7,8),(1,3),(18,90), (80,80)]
-    root4 = KDTree(points4)
+    root4 = KDTree(points4, None)
     traverse(root4.root, 1)
 
     result = root4.search((40,60), (90,110))

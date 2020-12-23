@@ -11,7 +11,7 @@ points1 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(
 region1 = [(40,60), (90,110)]
 answer1 = [(60,70), (80,80), (50,100)]
 
-root1 = KDTree(points1)
+root1 = KDTree(points1, None)
 result1 = root1.search(region1[0], region1[1])
 
 print(" ########### TEST 1 ########### ")
@@ -32,7 +32,7 @@ points2 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(
 region2 = [(-maxsize,-maxsize), (maxsize,maxsize)]
 answer2 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(45,23),(7,8),(1,3),(18,90), (80,80)]
 
-root2 = KDTree(points2)
+root2 = KDTree(points2, None)
 result2 = root2.search(region2[0], region2[1])
 
 print(" ########### TEST 2 ########### ")
@@ -53,7 +53,7 @@ points3 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(
 region3 = [(1,1), (1,1)]
 answer3 = []
 
-root3 = KDTree(points3)
+root3 = KDTree(points3, None)
 result3 = root3.search(region3[0], region3[1])
 
 print(" ########### TEST 3 ########### ")
@@ -75,7 +75,7 @@ points4 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(
 region4 = [(10,30),(40,60)]
 answer4 = [(10,45),(20,50),(30,40),(35,60)]
 
-root4 = KDTree(points4)
+root4 = KDTree(points4, None)
 result4 = root4.search(region4[0], region4[1])
 
 print(" ########### TEST 4 ########### ")

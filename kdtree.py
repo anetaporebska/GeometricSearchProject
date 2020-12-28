@@ -1,12 +1,5 @@
 from sys import maxsize
 
-# TODO wizualizacja
-# TODO komentarze
-# TODO posprzątać kod
-# TODO dodać bardziej zaawansowane testy
-# TODO co z punktami, które leżą na dzielących liniach, gdzie są przyporządkowywane
-# TODO dokumentacja
-
 class Node:
     def __init__(self, point):
         self.point = point
@@ -28,10 +21,11 @@ def partition(arr,left,right, idx):
 
     return i+1
 
+
 def kthStatistics(arr,left,right,k, idx):
     i=partition(arr,left,right, idx)
     if i==k:
-        return arr[i]
+        return
     if i>k:
         kthStatistics(arr,left,i-1,k, idx)
     else:
@@ -43,12 +37,39 @@ def median_idx(idx, points):
     kthStatistics(points,0, n-1, n//2, idx)
     return n//2
 
+
+def find_max(points):
+
+    max_x = -maxsize
+    max_y = -maxsize
+
+    for x,y in points:
+        if x > max_x:
+            max_x = x
+        if y > max_y:
+            max_y = y
+
+    return (max_x,max_y)
+
+def find_min(points):
+    min_x = maxsize
+    min_y = maxsize
+
+    for x, y in points:
+        if x < min_x:
+            min_x = x
+        if y < min_y:
+            min_y = y
+
+    return (min_x, min_y)
+
+
 class KDTree:
     def __init__(self,points, visualizer):
         self.root = self.construct(points, 0)
         self.visualizer = visualizer
-        self.root.upper_right = (110, 110)      # TODO nie może być maxsize, lepiej największa i najmniejsza wartość z poinst!!!
-        self.root.lower_left = (0, 0)
+        self.root.upper_right = find_max(points)
+        self.root.lower_left = find_min(points)
         self.calculate_regions(self.root, 0)
         self.result =[]
 
@@ -79,6 +100,7 @@ class KDTree:
         return root
 
     def calculate_regions(self, root, depth):
+
 
         if root.right == None and root.left == None:
             root.lower_left = None
@@ -119,6 +141,9 @@ class KDTree:
 
     def report_subtree(self,  root):
         self.result.append(root.point)
+        if self.visualizer:
+            self.visualizer.add_point(root.point)
+
         if root.left:
             self.report_subtree(root.left)
 
@@ -127,34 +152,44 @@ class KDTree:
 
     def search(self, lower_left, upper_right):
         self.result = []
+        if self.visualizer:
+            self.visualizer.add_rectangle([lower_left, upper_right])
+
         self.search_kd_tree(self.root, lower_left, upper_right)
         return self.result
 
     def search_kd_tree(self, root, ll, ur):
 
-        # v is a leaf
+        # aktualnie rozważany Node jest liściem
         if root.right == None and root.left == None:
             if point_inside(root.point, ll, ur):
                 self.result.append(root.point)
-                return
+                if self.visualizer:
+                    self.visualizer.add_point(root.point)
+            return
 
         if point_inside(root.point, ll, ur):
             self.result.append(root.point)
+            if self.visualizer:
+                self.visualizer.add_point(root.point)
 
-        # region lc(v) is fully contained in R
         if root.left:
+            # rozważany prostokąt zawiera się w całości w obszarze obejmowanym przez root
             if region_inside(root.lower_left, root.upper_right, ll, ur):
-                # report subtree lc(v)
+                # wszystkie punkty z lewego poddrzewa znajdują sie w prostokącie
                 self.report_subtree(root.left)
 
-            # region lc(v) intersects R
+            # rozważany prostokąt przecina się z obszarem obejmowanym przez root
             elif region_intersects(root.lower_left, root.upper_right, ll, ur):
                 self.search_kd_tree(root.left, ll, ur)
 
         if root.right:
+            # rozważany prostokąt zawiera się w całości w obszarze obejmowanym przez root
             if region_inside(root.lower_left, root.upper_right, ll, ur):
+                # wszystkie punkty z prawego poddrzewa znajdują sie w prostokącie
                 self.report_subtree(root.right)
 
+            # rozważany prostokąt przecina się z obszarem obejmowanym przez root
             elif region_intersects(root.lower_left, root.upper_right, ll, ur):
                 self.search_kd_tree(root.right, ll, ur)
 
@@ -167,7 +202,12 @@ def region_inside(region_ll, region_ur, ll, ur):
     return point_inside(region_ll, ll, ur) and point_inside(region_ur, ll, ur)
 
 def region_intersects(region_ll, region_ur, ll, ur):
-    return point_inside(region_ll, ll, ur) or point_inside(region_ur, ll, ur) or point_inside(ll, region_ll, region_ur) or point_inside(ur, region_ll, region_ur)
+    return (point_inside(region_ll, ll, ur)
+            or point_inside(region_ur, ll, ur)
+            or point_inside(ll, region_ll, region_ur)
+            or point_inside(ur, region_ll, region_ur)
+            or point_inside((region_ll[0], region_ur[1]), ll, ur)
+            or point_inside((ll[0], ur[1]), region_ll, region_ur))
 
 def traverse(root, depth):
     if not root:
@@ -189,34 +229,29 @@ def traverse(root, depth):
 
 
 
-
-
-
 if __name__ == "__main__":
-    points1 = [(20,50),(30,40),(30,60)]
-    root1 = KDTree(points1, None)
-    traverse(root1.root,1)
+    ### TEST 7 ###
+    points7 = [(1, 1), (1, 2), (1, 6), (3, 4), (4, 3), (4, 5), (4, 8), (5, 4), (6, 2), (6, 4), (7, 2), (7, 6), (9, 3),
+               (10, 1), (10, 7)]
+    region7 = [(2, 2), (7, 6)]
+    answer7 = [(3, 4), (4, 3), (4, 5), (5, 4), (6, 2), (6, 4), (7, 2), (7, 6)]
 
-    print("drugi")
-    points2 = [(20, 50), (30, 40), (30, 60), (50,100),(60,70),(30,65),(10,45)]
-    root2 = KDTree(points2, None)
-    traverse(root2.root,1)
+    root7 = KDTree(points7, None)
+    traverse(root7.root, 1)
+
+    result7 = root7.search(region7[0], region7[1])
+
+    print(" ########### TEST 7 ########### ")
+    if sorted(result7) == sorted(answer7):
+        print("Correct!")
+    else:
+        print("INCORRECT")
+        print("Correct answer: ", end="")
+        print(answer7)
+        print("Your answer: ", end="")
+        print(result7)
 
 
-    print("trzeci")
-    points3 = [(20, 50), (30, 40), (30, 60), (50, 100), (60, 70), (30, 60), (10, 45), (100,100),(30,50),(40,40),(20,20),(20,10),(45,23),(7,8),(1,3),(18,90)]
-    root3 = KDTree(points3, None)
-    traverse(root3.root,1)
-
-
-    print("czwarty") # wszystkie punkty różne x i y
-    points4 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(45,23),(7,8),(1,3),(18,90), (80,80)]
-    root4 = KDTree(points4, None)
-    traverse(root4.root, 1)
-
-    result = root4.search((40,60), (90,110))
-    print("RESULT: ")
-    print(result)
 
 
 

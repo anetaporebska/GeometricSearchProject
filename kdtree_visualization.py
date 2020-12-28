@@ -5,8 +5,8 @@ import matplotlib.collections as mcoll
 import matplotlib.colors as mcolors
 from matplotlib.widgets import Button
 import json as js
-from kdtree import KDTree
-
+from kdtree import KDTree, traverse
+from tests import random_points
 
 # Parametr określający jak blisko (w odsetku całego widocznego zakresu) punktu początkowego
 # wielokąta musimy kliknąć, aby go zamknąć.
@@ -272,7 +272,6 @@ class Plot:
         self.callback.draw()
 
 
-
 class Visualizer:
     def __init__(self, points):
         self.scenes = []
@@ -280,7 +279,8 @@ class Visualizer:
         self.lines = []
         l = self.lines[:]
         self.scenes.append(Scene([PointsCollection(self.points, color='green')], [LinesCollection(l, color='black')]))
-
+        self.rectangle = []
+        self.found_points = []
 
     def add_line(self, p1, p2):
         line = [p1, p2]
@@ -289,14 +289,57 @@ class Visualizer:
         scene = Scene([PointsCollection(self.points, color='green')], [LinesCollection(l, color='black')])
         self.scenes.append(scene)
 
-######################## Wizualizacja tworzenia drzewa #########################################################
+    def add_point(self, p1):
+        self.found_points.append(p1)
+        p = self.found_points[:]
+        self.scenes.append(Scene([PointsCollection(self.points, color='green'), PointsCollection(p, color='red')],
+                                 [LinesCollection(self.lines, color='black'),
+                                  LinesCollection(self.rectangle, color='blue')]))
 
-points4 = [(20, 50), (30, 40), (35, 60), (50, 100), (60, 70), (10, 45),(10,10),(45,23),(7,8),(1,3),(18,90), (80,80)]
-visualizer = Visualizer(points4)
-tree = KDTree(points4, visualizer)
+    def add_rectangle(self, region):
+        self.rectangle.append([(region[0][0], region[0][1]), (region[0][0], region[1][1])])
+        self.rectangle.append([(region[0][0], region[0][1]), (region[1][0], region[0][1])])
+        self.rectangle.append([(region[1][0], region[1][1]), (region[0][0], region[1][1])])
+        self.rectangle.append([(region[1][0], region[1][1]), (region[1][0], region[0][1])])
+        self.scenes.append(Scene([PointsCollection(self.points, color='green')],
+                                 [LinesCollection(self.lines, color='black'),
+                                  LinesCollection(self.rectangle, color='blue')]))
 
-plot = Plot(visualizer.scenes)
-plot.draw()
+
+def visualization(points, region):
+    ######################## Wizualizacja tworzenia drzewa #########################################################
+    visualizer = Visualizer(points)
+    tree = KDTree(points, visualizer)
+
+    plot = Plot(visualizer.scenes)
+    plot.draw()
+
+    scene = visualizer.scenes[-1]
+    visualizer.scenes = []
+    visualizer.scenes.append(scene)
+
+    # traverse(tree.root, 1)
+
+    ####################### Wizaualizacja znajdowania punktów #####################################################
+
+    result = tree.search(region[0], region[1])
+
+    plot = Plot(visualizer.scenes)
+    plot.draw()
+
+if __name__ == "__main__":
+    p1 = random_points((0, 0), (1000, 1000), 100)
+    r1 = [(0, 0), (500, 500)]
+    visualization(p1, r1)
+
+    p2 = random_points((0, 0), (0, 1000), 100)
+    r2 = [(0, 0), (0, 1000)]
+    visualization(p2, r2)
+
+    p3 = random_points((0,0), (1000,1000), 1000)
+    r3 = [(250,250), (750,750)]
+    visualization(p3,r3)
 
 
-####################### Wizaualizacja znajdowanych punktów #####################################################
+
+

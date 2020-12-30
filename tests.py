@@ -248,17 +248,21 @@ print()
 ###################################################################################################################
 ###################################### TIME TESTS #################################################################
 
-from random import randint
+from random import random
 import time
 
 def random_points(lower_left, upper_right, n):
 
     points = [None]*n
-
-    for i in range(n):
-        x = randint(lower_left[0], upper_right[0])
-        y = randint(lower_left[1], upper_right[1])
-        points[i] = (x,y)
+    points_set = set()
+    i =0
+    while i < n:
+        x = random()*upper_right[0]
+        y = random()*upper_right[1]
+        if (x,y) not in points_set:
+            points_set.add((x,y))
+            points[i] = (x,y)
+            i+=1
 
     return points
 
@@ -596,6 +600,86 @@ def measure_time():
 
 
     print()
+
+    ### MAŁE VS DUŻE ZAGĘSZCZENIE
+    p1 = random_points((0, 0), (100000, 100000), 100000)
+    p2 = random_points((0, 0), (100000, 100000), 100)
+
+    region1 = [(0, 0), (50000, 50000)]
+    region2 = [(0, 0), (100000, 100000)]
+
+
+    print("KDTree")
+    start = time.time()
+    root1 = KDTree(p1, None)
+    end = time.time()
+    print("Time for building tree for p8: ", end - start)
+
+    start = time.time()
+    root1.search(region1[0], region1[1])
+    end = time.time()
+    print("Finding points: ", end - start)
+
+    start = time.time()
+    root1.search((0, 0), (100000, 100000))
+    end = time.time()
+    print("Finding points: ", end - start)
+
+
+    print()
+    print("Quadtree")
+    start = time.time()
+    tree = prepare_tree(p1)
+    end = time.time()
+    print("Time for building tree for p8: ", end - start)
+
+    start = time.time()
+    find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
+    end = time.time()
+    print("Finding points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
+    end = time.time()
+    print("Finding points: ", end - start)
+
+    print()
+
+    print("KDTree")
+    start = time.time()
+    root2 = KDTree(p2, None)
+    end = time.time()
+    print("Time for building tree for p9: ", end - start)
+
+    start = time.time()
+    root2.search((0, 0), (50000, 50000))
+    end = time.time()
+    print("Finding points: ", end - start)
+
+    start = time.time()
+    root2.search((0, 0), (100000, 100000))
+    end = time.time()
+    print("Finding points: ", end - start)
+
+
+
+    print()
+    print("Quadtree")
+    start = time.time()
+    tree = prepare_tree(p2)
+    end = time.time()
+    print("Time for building tree for p9: ", end - start)
+
+    start = time.time()
+    find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
+    end = time.time()
+    print("Finding points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
+    end = time.time()
+    print("Finding points: ", end - start)
+
 
 
 

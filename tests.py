@@ -285,49 +285,60 @@ def measure_time():
     region1 = [(0,0), (500,500)]
     region2 = [(0,0),(1000,1000)]
     region3 = [(0,0), (0,1000)]
+    region4 = [(0, 0), (0, 100)]
 
     print("KDTree")
     start = time.time()
     root1 = KDTree(p1, None)
     end = time.time()
-    print("Time for building tree for p1: ", end - start)
+    print("Time for building tree for 100: ", end - start)
 
     start = time.time()
     root1.search(region1[0], region1[1])
     end = time.time()
-    print("Finding points: ", end - start )
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
-    root1.search((0, 0), (1000, 1000))
+    root1.search(region2[0], region2[1])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
-    root1.search((0, 0), (0, 1000))
+    root1.search(region3[0], region3[1])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    root1.search(region4[0], region4[1])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p1)
     end = time.time()
-    print("Time for building tree for p1: ", end - start)
+    print("Time for building tree for 100: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region4[1][1], region4[0][0], region4[0][1], region4[1][0])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
 
@@ -335,47 +346,56 @@ def measure_time():
     start = time.time()
     root2 = KDTree(p2, None)
     end = time.time()
-    print("Time for building tree for p2: ", end - start)
+    print("Time for building tree for 1000: ", end - start)
 
     start = time.time()
     root2.search((0, 0), (500, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     root2.search((0, 0), (1000, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     root2.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    root2.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p2)
     end = time.time()
-    print("Time for building tree for p2: ", end - start)
+    print("Time for building tree for 1000: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region4[1][1], region4[0][0], region4[0][1], region4[1][0])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
-
 
     print()
 
@@ -383,44 +403,54 @@ def measure_time():
     start = time.time()
     root3 = KDTree(p3, None)
     end = time.time()
-    print("Time for building tree for p3: ", end - start)
+    print("Time for building tree for 10000: ", end - start)
 
     start = time.time()
     root3.search((0, 0), (500, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     root3.search((0, 0), (1000, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     root3.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    root3.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p3)
     end = time.time()
-    print("Time for building tree for p3: ", end - start)
+    print("Time for building tree for 10000: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region4[1][1], region4[0][0], region4[0][1], region4[1][0])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
 
@@ -430,47 +460,56 @@ def measure_time():
     start = time.time()
     root4 = KDTree(p4, None)
     end = time.time()
-    print("Time for building tree for p4: ", end - start)
+    print("Time for building tree for 100000: ", end - start)
 
     start = time.time()
     root4.search((0, 0), (500, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     root4.search((0, 0), (1000, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
-    root4.search((0, 0), (0,1000))
+    root4.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    root4.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p4)
     end = time.time()
-    print("Time for building tree for p4: ", end - start)
+    print("Time for building tree for 100000: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    find_points(tree, region4[1][1], region4[0][0], region4[0][1], region4[1][0])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
-
 
     print()
 
@@ -478,89 +517,106 @@ def measure_time():
     start = time.time()
     root5 = KDTree(p5, None)
     end = time.time()
-    print("Time for building tree for p5: ", end - start)
+    print("Time for building tree for 1000000: ", end - start)
 
     start = time.time()
     root5.search((0, 0), (500, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     root5.search((0, 0), (1000, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     root5.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
+
+    start = time.time()
+    root5.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p5)
     end = time.time()
-    print("Time for building tree for p5: ", end - start)
+    print("Time for building tree for 1000000: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/4 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
     start = time.time()
     find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 0/1 (line) points: ", end - start)
 
+    start = time.time()
+    find_points(tree, region4[1][1], region4[0][0], region4[0][1], region4[1][0])
+    end = time.time()
+    print("Finding 1/100 points: ", end - start)
     print()
 
-
     print()
-
     ### WSZYSTKIE PUNKTY NA JEDNEJ LINII ###
     p6 = random_points((0,0), (0,1000), 100)
     p7 = random_points((0,0), (0,1000), 1000) # dla większej ilości punktów przekraczam rozmiar stosu?
     region1 = [(0,0), (0,500)]
     region2 = [(0,0), (0,1000)]
+    region3 = [(0, 0), (0, 100)]
 
     print("KDTree")
     start = time.time()
     root6 = KDTree(p6, None)
     end = time.time()
-    print("Time for building tree for p6: ", end - start)
+    print("Time for building tree for 100: ", end - start)
 
     start = time.time()
     root6.search((0, 0), (0, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/2 points: ", end - start)
 
     start = time.time()
     root6.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
+
+    start = time.time()
+    root6.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/10 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p6)
     end = time.time()
-    print("Time for building tree for p6: ", end - start)
+    print("Time for building tree for 100: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/2 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
+    start = time.time()
+    find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
+    end = time.time()
+    print("Finding 1/10 points: ", end - start)
 
     print()
     print()
@@ -569,35 +625,44 @@ def measure_time():
     start = time.time()
     root7 = KDTree(p7, None)
     end = time.time()
-    print("Time for building tree for p7: ", end - start)
+    print("Time for building tree for 1000: ", end - start)
 
     start = time.time()
     root7.search((0, 0), (0, 500))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/2 points: ", end - start)
 
     start = time.time()
     root7.search((0, 0), (0, 1000))
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
+
+    start = time.time()
+    root7.search((0, 0), (0, 100))
+    end = time.time()
+    print("Finding 1/10 points: ", end - start)
 
     print()
     print("Quadtree")
     start = time.time()
     tree = prepare_tree(p7)
     end = time.time()
-    print("Time for building tree for p7: ", end - start)
+    print("Time for building tree for 1000: ", end - start)
 
     start = time.time()
     find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/2 points: ", end - start)
 
     start = time.time()
     find_points(tree, region2[1][1], region2[0][0], region2[0][1], region2[1][0])
     end = time.time()
-    print("Finding points: ", end - start)
+    print("Finding 1/1 points: ", end - start)
 
+    start = time.time()
+    find_points(tree, region3[1][1], region3[0][0], region3[0][1], region3[1][0])
+    end = time.time()
+    print("Finding 1/10 points: ", end - start)
 
     print()
 

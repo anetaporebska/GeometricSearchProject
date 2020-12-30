@@ -281,6 +281,7 @@ class Visualizer:
         self.scenes.append(Scene([PointsCollection(self.points, color='green')], [LinesCollection(l, color='black')]))
         self.rectangle = []
         self.found_points = []
+        self.region = []
 
     def add_line(self, p1, p2):
         line = [p1, p2]
@@ -294,7 +295,8 @@ class Visualizer:
         p = self.found_points[:]
         self.scenes.append(Scene([PointsCollection(self.points, color='green'), PointsCollection(p, color='red')],
                                  [LinesCollection(self.lines, color='black'),
-                                  LinesCollection(self.rectangle, color='blue')]))
+                                  LinesCollection(self.rectangle, color='blue'),
+                                  LinesCollection(self.region, color='red')]))
 
     def add_rectangle(self, region):
         self.rectangle.append([(region[0][0], region[0][1]), (region[0][0], region[1][1])])
@@ -302,6 +304,27 @@ class Visualizer:
         self.rectangle.append([(region[1][0], region[1][1]), (region[0][0], region[1][1])])
         self.rectangle.append([(region[1][0], region[1][1]), (region[1][0], region[0][1])])
         self.scenes.append(Scene([PointsCollection(self.points, color='green')],
+                                 [LinesCollection(self.lines, color='black'),
+                                  LinesCollection(self.rectangle, color='blue')]))
+
+    def add_region(self, lower_left, upper_right):
+
+        region_lines = [[lower_left, (lower_left[0], upper_right[1])],
+                        [lower_left, (upper_right[0], lower_left[1])], [upper_right, (lower_left[0], upper_right[1])],
+                        [upper_right, (upper_right[0], lower_left[1])]]
+
+        self.region = region_lines
+        p = self.found_points[:]
+        self.scenes.append(Scene([PointsCollection(self.points, color='green'),
+                                  PointsCollection(p, color='red')],
+                                 [LinesCollection(self.lines, color='black'),
+                                  LinesCollection(self.rectangle, color='blue'),
+                                  LinesCollection(self.region, color='red')]))
+
+    def add_last_scene(self):
+        p = self.found_points[:]
+        self.scenes.append(Scene([PointsCollection(self.points, color='green'),
+                                  PointsCollection(p, color='red')],
                                  [LinesCollection(self.lines, color='black'),
                                   LinesCollection(self.rectangle, color='blue')]))
 
@@ -323,6 +346,7 @@ def visualization(points, region):
     ####################### Wizaualizacja znajdowania punktów #####################################################
 
     result = tree.search(region[0], region[1])
+    visualizer.add_last_scene()
 
     plot = Plot(visualizer.scenes)
     plot.draw()
@@ -331,10 +355,6 @@ if __name__ == "__main__":
     p1 = random_points((0, 0), (1000, 1000), 100)
     r1 = [(0, 0), (500, 500)]
     visualization(p1, r1)
-
-    p2 = random_points((0, 0), (0, 1000), 100)
-    r2 = [(0, 0), (0, 1000)]
-    visualization(p2, r2)
 
     p3 = random_points((0,0), (1000,1000), 1000)
     r3 = [(250,250), (750,750)]

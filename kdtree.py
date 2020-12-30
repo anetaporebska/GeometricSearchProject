@@ -160,6 +160,8 @@ class KDTree:
 
     def search_kd_tree(self, root, ll, ur):
 
+
+
         # aktualnie rozważany Node jest liściem
         if root.right == None and root.left == None:
             if point_inside(root.point, ll, ur):
@@ -167,6 +169,10 @@ class KDTree:
                 if self.visualizer:
                     self.visualizer.add_point(root.point)
             return
+
+        if self.visualizer:
+            self.visualizer.add_region(root.lower_left, root.upper_right)
+
 
         if point_inside(root.point, ll, ur):
             self.result.append(root.point)

@@ -1,19 +1,27 @@
 import math
 
-
 northeast = top = x = 0
 northwest = left = y = 1
 southwest = bottom = 2
 southeast = right = 3
 
 
+#klasa przechowujaca wezly drzewa, kolejne atrybuty przechowuja kolejno:
+#tablice z granicami obejmowanego obszaru
+#tablice z dziecmi wezla (inny wezel/punkt/None)
+#informacje, czy wezel jest dzieckiem, przechowujacym punkt
 class Node:
     def __init__(self, top_boundary, left_boundary, bottom_boundary, right_boundary):
         self.boundaries = (top_boundary, left_boundary, bottom_boundary, right_boundary)
         self.children = [None, None, None, None]
-        self.is_children_leaf = [False, False, False, False]
+        self.is_child_leaf = [False, False, False, False]
 
 
+#klasa przechowujaca korzen drzewa, kolejne atrybuty przechowuja kolejno:
+#informacje, czy drzewo nie posiada punktow
+#informacje, czy drzewo zawiera tylko jeden punkt
+#zapisany punkt, jezeli drzewo zawiera tylko jeden punkt
+#pierwszy wezel drzewa, jezeli zawiera ono wiecej niz jeden punkt
 class Root:
     def __init__(self, no_points, is_leaf, leaf_point, node):
         self.no_points = no_points
@@ -22,6 +30,15 @@ class Root:
         self.node = node
 
 
+#funkcja, usuwajaca ze zbioru powtarzajace sie punkty
+def del_repeated(points):
+    points.sort(key = lambda point: point[x])
+    for point_index in range(len(points) - 1, 0, -1):
+        if points[point_index][x] == points[point_index - 1][x] and points[point_index][y] == points[point_index - 1][y]:
+            del points[point_index]
+
+
+#funkcja odnajdujaca najdalej wysuniete wspolrzedne zbioru punktow (kolejno: lewa, prawa, dolna, gorna)
 def found_boundaries(points):
     min_horizontal = math.inf
     max_horizontal = -math.inf
@@ -37,6 +54,7 @@ def found_boundaries(points):
     return min_horizontal, max_horizontal, min_vertical, max_vertical
 
 
+#funkcja tworzaca kolejne dzieci wezla, moga to byc nowe wezly, liscie zawierajace punkt lub wartosci None
 def prepare_next_nodes(parent, points):
     split_vertical = (parent.boundaries[top] + parent.boundaries[bottom]) / 2
     split_horizontal = (parent.boundaries[left] + parent.boundaries[right]) / 2
@@ -58,7 +76,7 @@ def prepare_next_nodes(parent, points):
     for child_index in range(4):
         if len(children_points[child_index]) == 1:
             parent.children[child_index] = children_points[child_index][0]
-            parent.is_children_leaf[child_index] = True
+            parent.is_child_leaf[child_index] = True
 
         elif len(children_points[child_index]) > 1:
             if child_index == northeast:
@@ -74,17 +92,30 @@ def prepare_next_nodes(parent, points):
             prepare_next_nodes(new_children, children_points[child_index])
 
 
+#funkcja tworzaca korzen drzewa
 def create_root(points):
-    left_boundary, right_boundary, bottom_boundary, top_boundary = found_boundaries(points)
-
     if len(points) == 0:
         return Root(True, False, None, None)
     if len(points) == 1:
         return Root(False, True, points[0], None)
 
+    left_boundary, right_boundary, bottom_boundary, top_boundary = found_boundaries(points)
     return Root(False, False, None, Node(top_boundary, left_boundary, bottom_boundary, right_boundary))
 
 
+#funkcja przygotowuje cale drzewo, jezeli wystepuja powtarzajace sie punkty, nalezy podac jako drugi parametr True
+def prepare_tree(points, delete = False):
+    if delete:
+        del_repeated(points)
+    root = create_root(points)
+
+    if root.no_points == False and root.is_leaf == False:
+        prepare_next_nodes(root.node, points)
+
+    return root
+
+
+#funkcja sprawdzajaca, czy obszar obejmowany przez wezel w jakimkolwiek miejscu pokrywa sie z granicami sprawdzanego obszaru
 def field_inside(field, top_boundary, left_boundary, bottom_boundary, right_boundary):
     if field.boundaries[top] < bottom_boundary:
         return False
@@ -98,10 +129,11 @@ def field_inside(field, top_boundary, left_boundary, bottom_boundary, right_boun
     return True
 
 
+#funkcja znajdujaca w przekazanym poddrzewie punkty, lezace wewnatrz wskazanego obszaru
 def find_in_nodes(parent, top_boundary, left_boundary, bottom_boundary, right_boundary):
     points_inside = []
     for child_index in range(4):
-        if parent.is_children_leaf[child_index]:
+        if parent.is_child_leaf[child_index]:
             child = parent.children[child_index]
             if bottom_boundary <= child[y] <= top_boundary and left_boundary <= child[x] <= right_boundary:
                 points_inside.append(child)
@@ -114,6 +146,7 @@ def find_in_nodes(parent, top_boundary, left_boundary, bottom_boundary, right_bo
     return points_inside
 
 
+#funkcja znajdujaca w przekazanym drzewie punkty, lezace wewnatrz wskazanego obszaru
 def find_points(root, top_boundary, left_boundary, bottom_boundary, right_boundary):
     if root.no_points == True:
         return []
@@ -124,28 +157,3 @@ def find_points(root, top_boundary, left_boundary, bottom_boundary, right_bounda
             return []
 
     return find_in_nodes(root.node, top_boundary, left_boundary, bottom_boundary, right_boundary)
-
-
-def prepare_tree(points):
-    root = create_root(points)
-
-    if root.no_points == False and root.is_leaf == False:
-        prepare_next_nodes(root.node, points)
-
-    return root
-
-
-#"""
-points = [(5.3, 5.2), (5.3, 6.7), (6.0, 8.4), (6.3, 8.9), (7.3, 8.4000001), (8.85, 8.83), (8.82767, 7.8),
-          (8.82767, 5.9), (8.82767, 5.59), (8.82767, 5.588), (7, 7), (7.2, 7.4), (8, 6.5), (7.499999, 5.49999), (6, 4),
-          (6.2, 3.6), (8.9, 3.9), (0.44213512, 5.12532), (0.14144, 3.51), (1.2, 1.251)]
-top_boundary = 8.4
-left_boundary = 6
-bottom_boundary = 4
-right_boundary = 8.82767
-
-tree = prepare_tree(points)
-result = find_points(tree, top_boundary, left_boundary, bottom_boundary, right_boundary)
-
-print(result)
-#"""

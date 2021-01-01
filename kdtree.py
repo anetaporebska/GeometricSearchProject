@@ -77,6 +77,7 @@ class KDTree:
         self.calculate_regions(self.root, 0)
         self.result =[]
 
+    # funkcja budująca drzewo
     def construct(self, points, depth):
         n = len(points)
 
@@ -99,6 +100,7 @@ class KDTree:
 
         return root
 
+    # funkcja wyznaczająca obszary obejmowane przez każdy węzeł
     def calculate_regions(self, root, depth):
 
 

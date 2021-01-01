@@ -2,8 +2,6 @@ from kdtree import KDTree
 from quadtree import prepare_tree, find_points
 from sys import maxsize
 
-
-
 from random import random
 import time
 
@@ -292,7 +290,7 @@ def measure_time():
     region1 = [(0,0), (500,500)]
     region2 = [(0,0),(1000,1000)]
     region3 = [(0,0), (0,1000)]
-    region4 = [(0, 0), (0, 100)]
+    region4 = [(0, 0), (0, 10)]
     print()
     print("##############################")
     print("Points inside square 1000x1000")
@@ -683,7 +681,34 @@ def measure_time():
     print("Finding 1/10 points: ", end - start)
 
     print()
+    print()
 
+    p10 = [(0.0, 0.0), (0.000000000001, 0.0), (1000000000000, 0.0)]
+    region1 = [(0, 0), (0, 0)]
+
+    print("Quadtree")
+    start = time.time()
+    tree = prepare_tree(p10)
+    end = time.time()
+    print("Time for building tree for p10: ", end - start)
+
+    start = time.time()
+    for i in range(100000):
+        find_points(tree, region1[1][1], region1[0][0], region1[0][1], region1[1][0])
+    end = time.time()
+    print("Finding points: ", end - start)
+    print()
+    print("KDTree")
+    start = time.time()
+    root = KDTree(p10, None)
+    end = time.time()
+    print("Time for building tree for p10: ", end - start)
+
+    start = time.time()
+    for i in range(100000):
+        root.search((0, 0), (0, 0))
+    end = time.time()
+    print("Finding points: ", end - start)
 
 
 

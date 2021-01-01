@@ -335,6 +335,7 @@ def visualization(points, region):
     tree = KDTree(points, visualizer)
 
     plot = Plot(visualizer.scenes)
+
     plot.draw()
 
     scene = visualizer.scenes[-1]
@@ -342,6 +343,7 @@ def visualization(points, region):
     visualizer.scenes.append(scene)
 
     # traverse(tree.root, 1)
+
 
     ####################### Wizaualizacja znajdowania punktów #####################################################
 
@@ -351,10 +353,16 @@ def visualization(points, region):
     plot = Plot(visualizer.scenes)
     plot.draw()
 
+
+
+
+
 if __name__ == "__main__":
+
     p1 = random_points((0, 0), (1000, 1000), 100)
     r1 = [(0, 0), (500, 500)]
     visualization(p1, r1)
+
 
     p3 = random_points((0,0), (1000,1000), 1000)
     r3 = [(250,250), (750,750)]

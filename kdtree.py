@@ -8,7 +8,8 @@ class Node:
         self.upper_right = None
         self.lower_left = None
 
-
+# Funkcja dokonująca zmiany punktów miejscami, punkty mniejsze od pivota po lewej
+# stronie, większe po prawej.
 def partition(arr,left,right, idx):
     pi=arr[right][idx]
     i=left-1
@@ -21,7 +22,8 @@ def partition(arr,left,right, idx):
 
     return i+1
 
-
+# Funkcja ustawiająca elementy większego od k-tego (środkowego) elementy po jego
+# prawej stronie, a mniejsze po lewej stronie. Działa w złożoności O(n).
 def kthStatistics(arr,left,right,k, idx):
     i=partition(arr,left,right, idx)
     if i==k:
@@ -37,7 +39,7 @@ def median_idx(idx, points):
     kthStatistics(points,0, n-1, n//2, idx)
     return n//2
 
-
+# najbardziej w górę i prawo wysunięty punkt -> do wizualizacji
 def find_max(points):
 
     max_x = -maxsize
@@ -50,6 +52,8 @@ def find_max(points):
             max_y = y
 
     return (max_x,max_y)
+
+# najbardziej w górę i prawo wysunięty punkt -> do wizualizacji
 
 def find_min(points):
     min_x = maxsize
@@ -78,14 +82,11 @@ class KDTree:
 
         if n<1:
             return None
-
         if n==1:
             return Node(points[0])
 
         idx = depth%2
-
         m = median_idx(idx,points)
-
 
         left = points[0:m]
         right = points[m+1:n]
@@ -93,7 +94,6 @@ class KDTree:
         root = Node(points[m])
         left_child = self.construct(left, depth+1)
         right_child = self.construct(right, depth+1)
-
         root.right = right_child
         root.left = left_child
 
@@ -114,11 +114,9 @@ class KDTree:
                 self.visualizer.add_line((root.lower_left[0], root.point[1]), (root.upper_right[0], root.point[1]))
 
         if root.right:
-
             if (depth%2==0):
                 root.right.upper_right = root.upper_right
                 root.right.lower_left = (root.point[0], root.lower_left[1])
-
             else:
                 root.right.upper_right = root.upper_right
                 root.right.lower_left = (root.lower_left[0], root.point[1])
@@ -126,8 +124,6 @@ class KDTree:
             self.calculate_regions(root.right, depth+1)
 
         if root.left:
-
-            # sortowane po x
             if (depth%2==0):
                 root.left.upper_right = (root.point[0], root.upper_right[1])
                 root.left.lower_left = root.lower_left
@@ -232,32 +228,6 @@ def traverse(root, depth):
     if root.upper_right: print(" upper right: ", root.upper_right, end="")
 
     print("")
-
-
-
-if __name__ == "__main__":
-    ### TEST 7 ###
-    points7 = [(1, 1), (1, 2), (1, 6), (3, 4), (4, 3), (4, 5), (4, 8), (5, 4), (6, 2), (6, 4), (7, 2), (7, 6), (9, 3),
-               (10, 1), (10, 7)]
-    region7 = [(2, 2), (7, 6)]
-    answer7 = [(3, 4), (4, 3), (4, 5), (5, 4), (6, 2), (6, 4), (7, 2), (7, 6)]
-
-    root7 = KDTree(points7, None)
-    traverse(root7.root, 1)
-
-    result7 = root7.search(region7[0], region7[1])
-
-    print(" ########### TEST 7 ########### ")
-    if sorted(result7) == sorted(answer7):
-        print("Correct!")
-    else:
-        print("INCORRECT")
-        print("Correct answer: ", end="")
-        print(answer7)
-        print("Your answer: ", end="")
-        print(result7)
-
-
 
 
 
